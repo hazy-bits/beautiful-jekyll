@@ -11,3 +11,5 @@ pipelines:
         script: # Modify the commands below to build your repository.          
           - npm install
           - npm run build
+          - pip install awscli
+          - aws --region us-central-1 s3 sync site s3://hazybits.com
