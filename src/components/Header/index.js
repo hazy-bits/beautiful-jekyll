@@ -11,48 +11,32 @@ const Header = (props, { metadata: { pkg } }) => (
   <header className={ styles.header }>
     <nav className={ styles.nav }>
       <div className={ styles.navPart1 }>
-        <Link
-          className={ styles.link }
-          to={ "/" }
-        >
+        <Link className={ styles.link } to={ "/" }>
           { "Home" }
         </Link>
-        <Link
-          className={ styles.link }
-          to={ "/docs" }
-        >
-          { "Documentation" }
+        <Link className={ styles.link } to={ "/blog" } >
+          { "Blog" }
         </Link>
-        <Link
-          className={ styles.link }
-          to={ "/pricing" }
-        >
-          { "Pricing" }
-        </Link>
-        <Link
-          className={ styles.link }
-          to={ "/about" }
-        >
+        <Link className={ styles.link } to={ "/about" } >
           { "About" }
         </Link>
       </div>
       <div className={ styles.navPart2 }>
         {
+          <a href={ "/docs" } className={ styles.link } >
+            { "Documentation" }
+          </a>
+        }
+        {
           pkg.twitter &&
-          <a
-            href={ `https://twitter.com/${pkg.twitter}` }
-            className={ styles.link }
-          >
+          <a href={ `https://twitter.com/${pkg.twitter}` } className={ styles.link } >
             <Svg svg={ twitterSvg } cleanup />
             { "Twitter" }
           </a>
         }
         {
           pkg.repository &&
-          <a
-            href={ pkg.repository }
-            className={ styles.link }
-          >
+          <a href={ pkg.repository } className={ styles.link } >
             <Svg svg={ gitHubSvg } cleanup />
             { "GitHub" }
           </a>

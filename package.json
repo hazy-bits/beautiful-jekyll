@@ -2,8 +2,8 @@
   "private": true,
   "name": "hazybits-web",
   "homepage": "http://hazybits.com",
-  "twitter": "kolomiets",
-  "repository": "https://github.com/hazybits/hazybits-web.git",
+  "twitter": "hazy_bits",
+  "repository": "https://github.com/hazy-bits",
   "scripts": {
     "lint:js": "eslint --ignore-path .gitignore --fix .",
     "lint:css": "stylelint \"src/**/*.css\"",
