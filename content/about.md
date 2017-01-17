@@ -4,24 +4,22 @@ hero: https://farm4.staticflickr.com/3949/15589950511_3675b15e59_k.jpg
 # hero credit: https://www.flickr.com/photos/pslee999/15589950511/
 ---
 
-You are currently viewing Phenomic base theme.
+We at HazyBits are striving to adopt modern cloud technologies to bring advanced image processing and computer vision
+capabilities to developers of all kinds of applications. Our goal is to provide access to powerful instruments 
+through carefully designed APIs.
 
-For now [Phenomic does not provide a native way to extend themes](https://github.com/MoOx/phenomic/issues/508) but since it's based on
-React and uses a component approach, it's pretty easy to make your own reusable collection of layouts and components.
+## Team's Portfolio
+We are a small team of engineers who worked on major products in image processing industry during past 10+ years:
+
+ - [Captiva PixTools](http://www.emc2.org/enterprise-content-management/captiva/pixtools-toolkit.htm)
+ - [Captiva Cloud Toolkit](http://www.emc2.org/enterprise-content-management/captiva/cloud-toolkit.htm)
+ - [Kofax TotalAgility](http://www.kofax.com/smart-process-application-platform)
+ - [Atalasoft DotImage](http://www.atalasoft.com/Products/DotImage)
+ - [Atalasoft WingScan](http://www.atalasoft.com/Products/WingScan)
+ - [TWAIN Working Group projects](http://www.twain.org/)
+ 
+We understand the importance of visual information, especially now when images can be acquired instantly using mobile 
+phones. Our dream is to provide infrastructure that developers of modern applications could use to process huge amount 
+of images effortlessly and deliver user experiences previously unimaginable.
 
 ---
-
-This website is made with [Phenomic](https://phenomic.io/).
-
-If you are curious about it, you can take a look at
-[existing websites that use Phenomic](https://phenomic.io/showcase/),
-some projects share their source code!
-
-<!-- demo to show you that you can use "assets" folder -->
-<small>
-  Built with
-  <a href="https://facebook.github.io/react/">
-    <img alt="" src="../assets/react.svg" width="16" height="16" />
-    React
-  </a>.
-</small>
