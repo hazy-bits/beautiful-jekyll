@@ -1,16 +1,21 @@
 ---
 layout: page
 title: About me
-subtitle: Why you'd want to go on a date with me
+subtitle: A big story of a small team
 ---
 
-My name is Inigo Montoya. I have the following qualities:
+We at HazyBits are striving to adopt modern cloud technologies to bring advanced image processing and computer vision capabilities to developers of all kinds of applications. Our goal is to provide access to powerful instruments through carefully designed APIs.
 
-- I rock a great mustache
-- I'm extremely loyal to my family
+## Team's Portfolio
+We are a small team of engineers who worked on major products in image processing industry during past 10+ years:
 
-What else do you need?
-
-### my history
-
-To be honest, I'm having some trouble remembering right now, so why don't you just watch [my movie](http://en.wikipedia.org/wiki/The_Princess_Bride_%28film%29) and it will answer **all** your questions.
+ - [Captiva PixTools](http://www.emc2.org/enterprise-content-management/captiva/pixtools-toolkit.htm)
+ - [Captiva Cloud Toolkit](http://www.emc2.org/enterprise-content-management/captiva/cloud-toolkit.htm)
+ - [Kofax TotalAgility](http://www.kofax.com/smart-process-application-platform)
+ - [Atalasoft DotImage](http://www.atalasoft.com/Products/DotImage)
+ - [Atalasoft WingScan](http://www.atalasoft.com/Products/WingScan)
+ - [TWAIN Working Group projects](http://www.twain.org/)
+ 
+We understand the importance of visual information, especially now when images can be acquired instantly using mobile 
+phones. Our dream is to provide infrastructure that developers of modern applications could use to process huge amount 
+of images effortlessly and deliver user experiences previously unimaginable.
