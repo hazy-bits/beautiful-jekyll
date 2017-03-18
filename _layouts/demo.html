@@ -55,7 +55,7 @@ common-js:
         if (typeof(report) === "object") {
           var collapsibleId = 'files' + new Date().getTime();
           var reportDiv = $('<li><a data-toggle="collapse" href=' + collapsibleId +
-                                    ' aria-expanded="false" aria-controls="#${collapsibleId}">[' +
+                                    ' aria-expanded="false" aria-controls="' + collapsibleId + '">[' +
                                     (new Date()).toTimeString().slice(0, 8) + '] Execution Results</a></li>');
 
           if (report.blobs) {
@@ -64,7 +64,7 @@ common-js:
               if (blobName === 'image') {
                 content.append('<img src="data:image/png;base64, ' + report.blobs[blobName] + '" style="max-height:400px">');
               } else {
-                content.append('<a target="_blank" href=' + report.blobs[blobName] + '> Download ${blobName}</a>');
+                content.append('<a target="_blank" href=' + report.blobs[blobName] + '> Download ' + blobName + '</a>');
               }
               reportDiv.append(content);
             }
