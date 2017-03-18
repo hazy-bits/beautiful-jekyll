@@ -54,8 +54,8 @@ common-js:
         var report = JSON.parse(message);
         if (typeof(report) === "object") {
           var collapsibleId = 'files' + new Date().getTime();
-          var reportDiv = $('<li><a data-toggle="collapse" href=' + collapsibleId +
-                                    ' aria-expanded="false" aria-controls="' + collapsibleId + '">[' +
+          var reportDiv = $('<li><a data-toggle="collapse" href="#' + collapsibleId + '" aria-expanded="false"' +
+                                    ' aria-controls="' + collapsibleId + '">[' +
                                     (new Date()).toTimeString().slice(0, 8) + '] Execution Results</a></li>');
 
           if (report.blobs) {
