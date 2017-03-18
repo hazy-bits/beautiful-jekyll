@@ -1,6 +1,6 @@
 ---
 layout: page
-title: About me
+title: About us
 subtitle: A big story of a small team
 ---
 
