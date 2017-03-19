@@ -5,7 +5,7 @@
 body {
   /*font-family: 'Lora', 'Times New Roman', serif;*/
   font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
-  font-size: 18px;
+  font-size: 16px;
   color: #404040;
   position: relative;
   background: #FFF;
@@ -21,14 +21,14 @@ p a {
 h1,h2,h3,h4,h5,h6 {
   /*font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
   font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
-  font-weight: 800;
+  font-weight: 600;
 }
 a {
   color: #008AFF;
 }
 a:hover,
 a:focus {
-  color: #0085a1;
+  color: #202E54; /*#0085a1;*/
 }
 blockquote {
   color: #808080;
@@ -66,12 +66,12 @@ hr.small {
 ::-moz-selection {
   color: white;
   text-shadow: none;
-  background: #0085a1;
+  background: #202E54; /*#0085a1;*/
 }
 ::selection {
   color: white;
   text-shadow: none;
-  background: #0085a1;
+  background: #202E54; /*#0085a1;*/
 }
 img::selection {
   color: white;
@@ -120,14 +120,14 @@ img {
 .navbar-custom .navbar-brand:focus ,
 .navbar-custom .nav li a:hover,
 .navbar-custom .nav li a:focus {
-  color: #0085a1;
+  color: #202E54; /*#0085a1;*/
 }
 
 .navbar-custom .navbar-brand-logo {
   padding-top: 0;
   -webkit-transition: padding .5s ease-in-out;
   -moz-transition: padding .5s ease-in-out;
-  transition: padding .5s ease-in-out;  
+  transition: padding .5s ease-in-out;
 }
 .navbar-custom .navbar-brand-logo img {
   height: 50px;
@@ -193,14 +193,14 @@ img {
     width: 100px;
     margin-top: -50px;
   }
-  
+
   .navbar-custom .avatar-container  .avatar-img-border {
     width: 100%;
     box-shadow: 1px 1px 2px rgba(0, 0, 0, .8);
     -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .8);
     -moz-box-shadow: 1px 1px 2px rgba(0, 0, 0, .8);
   }
-  
+
   .navbar-custom .avatar-container  .avatar-img {
     width: 100%;
   }
@@ -238,7 +238,7 @@ img {
 @media only screen and (min-width: 768px) {
   .navbar-custom .nav .navlinks-container {
     text-align: center;
-  }  
+  }
   .navbar-custom .nav .navlinks-container:hover {
     background: #eee;
   }
@@ -294,7 +294,7 @@ footer .theme-by {
     font-size: 16px;
   }
 }
- 
+
 /* --- Post preview --- */
 
 .post-preview {
@@ -320,7 +320,7 @@ footer .theme-by {
 .post-preview a:focus,
 .post-preview a:hover {
   text-decoration: none;
-  color: #0085a1;
+  color: #202E54; /*#0085a1;*/
 }
 
 .post-preview .post-title {
@@ -411,7 +411,7 @@ footer .theme-by {
     height: 100px;
     width: 100px;
   }
-  
+
   .post-image {
     width: 100%;
     text-align: center;
@@ -506,11 +506,11 @@ footer .theme-by {
   }
   .intro-header.big-img {
     margin-top: 91px;  /* Full navbar is small navbar + 20px padding on each side when expanded */
-  }	
+  }
   .intro-header.big-img .page-heading,
   .intro-header.big-img .post-heading  {
     padding: 150px 0;
-  }  
+  }
   .intro-header .page-heading h1 {
     font-size: 80px;
   }
@@ -547,9 +547,9 @@ footer .theme-by {
   }
   .header-section.has-img .big-img {
     margin-bottom: 0;
-  }  
-} 
-@media only screen and (max-width: 325px) { 
+  }
+}
+@media only screen and (max-width: 325px) {
   .intro-header.big-img {
     height: 200px;
   }
@@ -587,8 +587,8 @@ footer .theme-by {
 .pager li a:hover,
 .pager li a:focus {
   color: #FFF;
-  background: #0085a1;
-  border: 1px solid #0085a1;
+  background: #202E54; /*#0085a1;*/
+  border: 1px solid #202E54; /*#0085a1;*/
 }
 
 .pager {
