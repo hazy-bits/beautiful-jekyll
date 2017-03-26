@@ -5,6 +5,7 @@ rvm:
 install:
   - bundle install
   - gem install html-proofer
+  - pip install awscli
 script: 
   - bundle exec jekyll build 
   - htmlproofer ./_site --disable-external
