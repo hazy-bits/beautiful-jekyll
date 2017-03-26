@@ -9,6 +9,12 @@ install:
 script: 
   - bundle exec jekyll build 
   - htmlproofer ./_site --disable-external
+  # Deploy web site to S3
+  - aws --region us-west-2 s3 sync _site s3://hazybits.com
+  # Allow `awscli` to make requests to CloudFront.
+  # - aws configure set preview.cloudfront true
+  # Invalidate every object in the targeted distribution.
+  # - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
 
 # branch whitelist, only for GitHub Pages
 branches:
@@ -19,4 +25,4 @@ env:
   global:
   - NOKOGIRI_USE_SYSTEM_LIBRARIES=true # speeds up installation of html-proofer
 
-sudo: false # route your build to the container-based infrastructure for a faster build
+# sudo: false # route your build to the container-based infrastructure for a faster build
