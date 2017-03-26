@@ -2,19 +2,24 @@ language: ruby
 rvm:
 - 2.3.3
 
+before_install:
+  - pip install --user awscli
+  - export PATH=$PATH:$HOME/.local/bin
+  
 install:
   - bundle install
   - gem install html-proofer
-  - pip install awscli
+  
 script: 
   - bundle exec jekyll build 
   - htmlproofer ./_site --disable-external
   # Deploy web site to S3
   - aws --region us-west-2 s3 sync _site s3://hazybits.com
   # Allow `awscli` to make requests to CloudFront.
-  # - aws configure set preview.cloudfront true
-  # Invalidate every object in the targeted distribution.
-  # - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
+  - aws configure set preview.cloudfront true
+  # Invalidate every object in the targeted distributions.
+  - aws cloudfront create-invalidation --distribution-id $AWS_CLOUDFRONT_ID_SITE --paths "/*"
+  - aws cloudfront create-invalidation --distribution-id $AWS_CLOUDFRONT_ID_SITE_WWW --paths "/*"
 
 # branch whitelist, only for GitHub Pages
 branches:
