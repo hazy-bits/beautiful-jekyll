@@ -4,10 +4,10 @@ rvm:
 
 install:
   - bundle install
-  - gem install jekyll html-proofer
+  - gem install html-proofer
 script: 
   - bundle exec jekyll build 
-  - bundle exec htmlproofer ./_site --disable-external
+  - htmlproofer ./_site --disable-external
 
 # branch whitelist, only for GitHub Pages
 branches:
