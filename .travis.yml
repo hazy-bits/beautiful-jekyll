@@ -2,7 +2,9 @@ language: ruby
 rvm:
 - 2.3.3
 
-install: gem install jekyll html-proofer
+install:
+  - bundle install
+  - gem install jekyll html-proofer
 script: 
   - bundle exec jekyll build 
   - bundle exec htmlproofer ./_site --disable-external
