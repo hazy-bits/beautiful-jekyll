@@ -1,15 +1,33 @@
-language: python
-python:
-- '2.7'
+language: ruby
+rvm:
+- 2.3.3
+
+before_install:
+  - pip install --user awscli
+  - export PATH=$PATH:$HOME/.local/bin
+  
 install:
-  - . $HOME/.nvm/nvm.sh
-  - nvm install 6
-  - nvm use 6
-  - pip install awscli
-script:
-  - npm install
-  - npm run build
-  - aws --region us-west-2 s3 sync dist s3://hazybits.com
-notifications:
-  slack:
-    secure: P4BSaMXkZHumTC4TxFix/NmE4+H+sBMjdUwp97dvFwCu+ne+5XMRtL8C4PnyBNVo2jmhs1DmszR7d3r4cyyVBBBPqmcdz2EicrIu516lYyKhFgXoewZ+xjr6SpJ7nsUT2zpr0RjX/iwhf441yA3Ye8HulSExQqwsh6Iwf/nLYHlpvjcr4cBvQ/vOYaCChlW6XC5ZE5COI+SR8QqJVy7+kFrT4QbY3LCZ39WeATn0ALNjHg1o4COo6+Xy+82sOL4UIMosZcFlNZNIHajPaxeNqIhHhK1eqW+/vRJ50Y+OzPQReGVZzk1di6qFN4pPph3wA80CF+LwEndr3IoOucvCacgLXjO4TW7/PTOhErj+efwYrYKnu0ZrH83xEkYOU2VolmJ7YgFRqiapWqfYm9xTVKR0q8XzAPItLv8Pl3PLnMpBnf641Ro5WQ3hBnwJaeWL/zK6od3vLV7lnrjIJDjdE3UcxZun9ySByvTlHap56yx1z0A61mgEYsao9AlvHa2s8Xj220bfuLEk6hkbJvFq5qGiwgtqoz6aLivftZbpy1EyrcteyHfPTsL8vfGt+1+f1mYZ9K3hRQzPUmWfvtu+BklZL9h2/Hhj/y1fbtyZHIUN7r/ldHzXAetfHgEC8oi98VmTue0jz2MkcbNCPDYNW82b5tbVoqkBw3drb8TG+NA=
+  - bundle install
+  - gem install html-proofer
+  
+script: 
+  - bundle exec jekyll build 
+  - htmlproofer ./_site --disable-external
+  # Deploy web site to S3
+  - aws --region us-west-2 s3 sync _site s3://hazybits.com
+  # Allow `awscli` to make requests to CloudFront.
+  - aws configure set preview.cloudfront true
+  # Invalidate every object in the targeted distributions.
+  - aws cloudfront create-invalidation --distribution-id $AWS_CLOUDFRONT_ID_SITE --paths "/*"
+  - aws cloudfront create-invalidation --distribution-id $AWS_CLOUDFRONT_ID_SITE_WWW --paths "/*"
+
+# branch whitelist, only for GitHub Pages
+branches:
+  only:
+  - master     # test the gh-pages branch
+
+env:
+  global:
+  - NOKOGIRI_USE_SYSTEM_LIBRARIES=true # speeds up installation of html-proofer
+
+sudo: false # route your build to the container-based infrastructure for a faster build

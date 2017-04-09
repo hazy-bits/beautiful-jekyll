@@ -1,0 +1,215 @@
+---
+layout: base
+common-js:
+  - "/js/jquery-1.11.2.min.js"
+  - "/js/bootstrap.js"
+  - "/js/demo/hazybits.js"
+  - "/js/demo/lock.min.js"
+---
+
+{% include header.html type="page" %}
+
+<div class="container" role="main">
+    <div class="row">
+        <div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1">
+            {{ content }}
+
+            <div class="row">
+                <h2>Serverless Notifications</h2>
+            </div>
+            <div class="row">
+                <input id="btn-connect" type="button" class="btn btn-primary" value='Connect'>
+            </div>
+            <div class="row">
+                Select file for processing: <input type="file"><br>
+            </div>
+            <div class="row">
+                <input id="btn-start" type="button" class="btn btn-primary" value='Upload and Process'>
+                <input id="btn-threshold" type="button" class="btn btn-primary" value='Threshold'>
+                <input id="btn-rotate" type="button" class="btn btn-primary" value='Rotate'>
+                <input id="btn-ocr" type="button" class="btn btn-primary" value='OCR'>
+            </div>
+            <div class="row">
+                <h3>Log Messages</h3>
+                <ul id="log"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- That is the port you need to update for your deployment -->
+<script type="text/javascript">
+  function addLog(msg) {
+    var date = (new Date()).toTimeString().slice(0, 8);
+    $("#log").prepend('<li>[' + date + '] ' + msg + '</li>');
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+
+    var client = new HazyBits();
+    var lock = new Auth0Lock('Fcq8toCdLXMvy2kUzjFAoDG7FcpTQwvy', 'hazybits.eu.auth0.com');
+
+    var processResponse = function (message) {
+      try {
+        var report = JSON.parse(message);
+        if (typeof(report) === "object") {
+          var collapsibleId = 'files' + new Date().getTime();
+          var reportDiv = $('<li><a data-toggle="collapse" href="#' + collapsibleId + '" aria-expanded="false"' +
+                                    ' aria-controls="' + collapsibleId + '">[' +
+                                    (new Date()).toTimeString().slice(0, 8) + '] Execution Results</a></li>');
+
+          if (report.blobs) {
+            for (var blobName in report.blobs) {
+              var content = $('<div class="collapse" id="' + collapsibleId + '"></div>');
+              if (blobName === 'image') {
+                content.append('<img src="data:image/png;base64, ' + report.blobs[blobName] + '" style="max-height:400px">');
+              } else {
+                content.append('<a target="_blank" href=' + report.blobs[blobName] + '> Download ' + blobName + '</a>');
+              }
+              reportDiv.append(content);
+            }
+            $("#log").prepend(reportDiv);
+          }
+          else {
+            addLog("message: " + message);
+          }
+
+        }
+      } catch (e) {
+        addLog("message: " + message);
+      }
+    };
+
+    // Listening for the authenticated event
+    lock.on("authenticated", function (authResult) {
+      localStorage.setItem('idToken', authResult.idToken);
+
+      lock.getProfile(authResult.idToken, function (error, profile) {
+        if (error) {
+          // Handle error
+          return;
+        }
+        // Display user information
+        addLog(JSON.stringify(profile));
+      });
+
+      client.connect(authResult.idToken, function (err, data) {
+        if (err) addLog(err);
+
+        client.on('connect', function () {
+          addLog("connected");
+
+          $('#btn-connect').prop('disabled', true);
+          $('#btn-send').prop('disabled', false);
+        });
+
+        client.on('message', function (message) {
+          try {
+            addLog("message: " + message);
+              /*
+               var report = JSON.parse(message);
+               if (typeof(report) === "object"){
+               var collapsibleId = `files${(new Date()).getTime()}`;
+               var reportDiv = $(`<li><a data-toggle="collapse" href="#${collapsibleId}" aria-expanded="false" aria-controls="#${collapsibleId}">[${(new Date()).toTimeString().slice(0, 8)}] ${report.status}</a></li>`);
+
+               if (report.blobs) {
+               for(let blobName in report.blobs) {
+               let content = $(`<div class="collapse" id="${collapsibleId}"></div>`);
+               if (blobName === 'image'){
+               content.append(`<img src="data:image/png;base64, ${report.blobs[blobName]}" style="max-height:400px">`);
+               } else {
+               content.append(`<a  target="_blank" href=${report.blobs[blobName]}> Download ${blobName}</a>`);
+               }
+               reportDiv.append(content);
+               }
+               }
+               else {
+               addLog("message: " + message);
+               }
+
+               }
+               */
+          } catch (e) {
+            addLog("message: " + message);
+          }
+        });
+        client.on('error', function (error) {
+          addLog("error: " + error);
+        });
+      });
+
+    });
+
+    // initial state
+    $('#btn-connect').prop('disabled', false);
+    $('#btn-send').prop('disabled', true);
+
+    $('#btn-connect').on('click', function () {
+      lock.show({
+        auth: {
+          params: {
+            scope: 'openid email user_metadata app_metadata'
+          }
+        }
+      });
+    });
+
+    $('#btn-send').on('click', function () {
+      var msg = $('#message').val();
+      client.send(msg);
+      $('#message').val('');
+    });
+
+    $('#btn-start').on('click', function () {
+      var reader = new FileReader();
+      reader.addEventListener("load", function () {
+        var base64 = reader.result.split(',')[1];
+        client.start(base64);
+      }, false);
+
+      var file = document.querySelector('input[type=file]').files[0];
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+    });
+
+    $('#btn-threshold').on('click', function () {
+      var reader = new FileReader();
+      reader.addEventListener("load", function () {
+        var base64 = reader.result.split(',')[1];
+        client.threshold(base64, processResponse);
+      }, false);
+
+      var file = document.querySelector('input[type=file]').files[0];
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+    });
+
+    $('#btn-rotate').on('click', function () {
+      var reader = new FileReader();
+      reader.addEventListener("load", function () {
+        var base64 = reader.result.split(',')[1];
+        client.rotate(base64, processResponse);
+      }, false);
+
+      var file = document.querySelector('input[type=file]').files[0];
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+    });
+
+    $('#btn-ocr').on('click', function () {
+      var reader = new FileReader();
+      reader.addEventListener("load", function () {
+        var base64 = reader.result.split(',')[1];
+        client.ocr(base64, processResponse);
+      }, false);
+
+      var file = document.querySelector('input[type=file]').files[0];
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+    });
+  });
+</script>
