@@ -1,10 +1,10 @@
 ---
 layout: base
 common-js:
-  - "/js/jquery-1.11.2.min.js"
-  - "/js/bootstrap.js"
-  - "/js/demo/hazybits.js"
-  - "/js/demo/lock.min.js"
+- "/js/jquery-1.11.2.min.js"
+- "/js/bootstrap.js"
+- "/js/demo/hazybits.js"
+- "/js/demo/lock.min.js"
 ---
 
 {% include header.html type="page" %}
@@ -30,8 +30,9 @@ common-js:
                 <input id="btn-ocr" type="button" class="btn btn-primary" value='OCR'>
             </div>
             <div class="row">
-                <h3>Log Messages</h3>
-                <ul id="log"></ul>
+                <h3>Messages</h3>
+                <ul id="log" class="nav nav-tabs"></ul>
+                <div id="logContent" class="tab-content"></div>
             </div>
         </div>
     </div>
@@ -39,177 +40,213 @@ common-js:
 
 <!-- That is the port you need to update for your deployment -->
 <script type="text/javascript">
-  function addLog(msg) {
-    var date = (new Date()).toTimeString().slice(0, 8);
-    $("#log").prepend('<li>[' + date + '] ' + msg + '</li>');
-  }
 
-  document.addEventListener('DOMContentLoaded', function() {
+    function ClerLog() {
+        $('#log').empty();
+        $('#logContent').empty();
+    }
 
-    var client = new HazyBits();
-    var lock = new Auth0Lock('Fcq8toCdLXMvy2kUzjFAoDG7FcpTQwvy', 'hazybits.eu.auth0.com');
+    function addLog(title, message) {
+        appendNotification(title, $('<div> ' + message + ' </div>'));
+    }
 
-    var processResponse = function (message) {
-      try {
-        var report = JSON.parse(message);
-        if (typeof(report) === "object") {
-          var collapsibleId = 'files' + new Date().getTime();
-          var reportDiv = $('<li><a data-toggle="collapse" href="#' + collapsibleId + '" aria-expanded="false"' +
-                                    ' aria-controls="' + collapsibleId + '">[' +
-                                    (new Date()).toTimeString().slice(0, 8) + '] Execution Results</a></li>');
+    function appendNotification(title, content) {
 
-          if (report.blobs) {
-            for (var blobName in report.blobs) {
-              var content = $('<div class="collapse" id="' + collapsibleId + '"></div>');
-              if (blobName === 'image') {
-                content.append('<img src="data:image/png;base64, ' + report.blobs[blobName] + '" style="max-height:400px">');
-              } else {
-                content.append('<a target="_blank" href=' + report.blobs[blobName] + '> Download ' + blobName + '</a>');
-              }
-              reportDiv.append(content);
+        var log = $("#log"),
+            logContent = $('#logContent');
+
+        var setActive = log.is(':empty');
+        var tabId = 'tab' + new Date().getTime();
+        var header = '<a data-toggle="tab" href="#' + tabId +'">' + title + '</a>';
+
+        var logDiv = $('<div id="' + tabId + '" class="tab-pane ' + (setActive ? 'fade in active' : 'fade' ) + '" />');
+        logDiv.append(content);
+
+        logContent.append(logDiv);
+        log.append('<li ' + (setActive ? 'class="active"' : '') + '>' + header + '</li>');
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var client = new HazyBits('https://8dxivkuj5k.execute-api.us-west-2.amazonaws.com/dev');
+        var lock = new Auth0Lock('Fcq8toCdLXMvy2kUzjFAoDG7FcpTQwvy', 'hazybits.eu.auth0.com');
+        var token = localStorage.getItem('idToken');
+        if (token)
+            onAuthenticated(token);
+
+        function startProcessing(action) {
+            ClerLog();
+            var reader = new FileReader();
+            reader.addEventListener("load", function () {
+                var base64 = reader.result.split(',')[1];
+                action(client, base64);
+            }, false);
+
+            var file = document.querySelector('input[type=file]').files[0];
+            if (file) {
+                reader.readAsDataURL(file);
             }
-            $("#log").prepend(reportDiv);
-          }
-          else {
-            addLog("message: " + message);
-          }
-
         }
-      } catch (e) {
-        addLog("message: " + message);
-      }
-    };
 
-    // Listening for the authenticated event
-    lock.on("authenticated", function (authResult) {
-      localStorage.setItem('idToken', authResult.idToken);
-
-      lock.getProfile(authResult.idToken, function (error, profile) {
-        if (error) {
-          // Handle error
-          return;
+        function processEndpointResponseFactory(title) {
+            return function (message) {
+                processResponse(message, title, false);
+            };
         }
-        // Display user information
-        addLog(JSON.stringify(profile));
-      });
 
-      client.connect(authResult.idToken, function (err, data) {
-        if (err) addLog(err);
+        function processResponse(response, title, blobsLoaded) {
+            try {
+                var report = JSON.parse(response);
+                if (typeof(report) === "object") {
+                    title = title || report.step;
+                    var collapsibleId = 'files' + new Date().getTime();
+                    var reportDiv = $('<div/>');
+                    var $preview = $('<div style="width: 50%; display: inline-block;">');
+                    var $json = $('<div  style="width: 50%; display: inline-block;"><code>' + response + '</code> </div>');
 
-        client.on('connect', function () {
-          addLog("connected");
+                    reportDiv.append($preview);
+                    reportDiv.append($json);
+                    if (report.blobs) {
+                        for (var blobName in report.blobs) {
+                            var content = $('<div/>');
+                            if (blobName === 'image') {
+                                if (blobsLoaded) {
+                                    content.append('<img src="data:image/png;base64, ' + report.blobs[blobName] + '" style="max-height:400px">');
+                                }
+                                else {
+                                    downloadBlob(report.blobs[blobName], function (data) {
+                                        content.append('<img src="data:image/png;base64, ' + data + '" style="max-height:400px">');
+                                    });
+                                }
+                            } else {
+                                if (blobsLoaded) {
+                                    content.append('<pre style="max-height:400px">' + report.blobs[blobName] + ' </pre>');
+                                } else {
+                                    var $link = $('<a target="_blank" href=' + report.blobs[blobName] + '> Download ' + blobName + '</a>');
+                                    $link.click(function () {
+                                        var blob = $(this).data('blob');
+                                        downloadBlob(blob, function (data) {
+                                            $('<pre style="max-height:400px">' + data + ' </pre>').insertBefore($link);
+                                            $link.remove();
+                                        });
 
-          $('#btn-connect').prop('disabled', true);
-          $('#btn-send').prop('disabled', false);
+                                        return false;
+                                    });
+
+                                    $link.data('blob', report.blobs[blobName]);
+                                    content.append($link);
+                                }
+                            }
+
+                            $preview.append(content);
+                        }
+
+                        appendNotification(title, reportDiv);
+                    }
+                    else {
+                        addLog("message",  message);
+                    }
+                }
+            } catch (e) {
+                addLog("error", JSON.stringify({
+                    message: response,
+                    error: e.message,
+                    stack: e.stack
+                }));
+            }
+        }
+
+        function onAuthenticated(token) {
+            client.connect(token, function (err, data) {
+                if (err) addLog("error", err);
+
+                client.on('connect', function () {
+                    $('#btn-connect').prop('disabled', true);
+                    $('#btn-send').prop('disabled', false);
+                });
+
+                client.on('message', function (message) {
+                    try {
+                        processResponse(message, null, false)
+                    } catch (e) {
+                        addLog("error", JSON.stringify({
+                            message: message,
+                            error: e.message,
+                            stack: e.stack
+                        }));
+                    }
+                });
+                client.on('error', function (error) {
+                    addLog("error", error);
+                });
+            });
+        }
+
+        function downloadBlob(blob, callback) {
+            client.download(blob, function (error, data) {
+                callback (!error ? data : '');
+            });
+        }
+
+        // Listening for the authenticated event
+        lock.on("authenticated", function (authResult) {
+            localStorage.setItem('idToken', authResult.idToken);
+
+            lock.getProfile(authResult.idToken, function (error, profile) {
+                if (error) {
+                    // Handle error
+                    return;
+                }
+            });
+
+            onAuthenticated(authResult.idToken);
+
         });
 
-        client.on('message', function (message) {
-          try {
-            addLog("message: " + message);
-              /*
-               var report = JSON.parse(message);
-               if (typeof(report) === "object"){
-               var collapsibleId = `files${(new Date()).getTime()}`;
-               var reportDiv = $(`<li><a data-toggle="collapse" href="#${collapsibleId}" aria-expanded="false" aria-controls="#${collapsibleId}">[${(new Date()).toTimeString().slice(0, 8)}] ${report.status}</a></li>`);
+        // initial state
+        $('#btn-connect').prop('disabled', false);
+        $('#btn-send').prop('disabled', true);
 
-               if (report.blobs) {
-               for(let blobName in report.blobs) {
-               let content = $(`<div class="collapse" id="${collapsibleId}"></div>`);
-               if (blobName === 'image'){
-               content.append(`<img src="data:image/png;base64, ${report.blobs[blobName]}" style="max-height:400px">`);
-               } else {
-               content.append(`<a  target="_blank" href=${report.blobs[blobName]}> Download ${blobName}</a>`);
-               }
-               reportDiv.append(content);
-               }
-               }
-               else {
-               addLog("message: " + message);
-               }
-
-               }
-               */
-          } catch (e) {
-            addLog("message: " + message);
-          }
+        $('#btn-connect').on('click', function () {
+            lock.show({
+                auth: {
+                    params: {
+                        scope: 'openid email user_metadata app_metadata'
+                    }
+                }
+            });
         });
-        client.on('error', function (error) {
-          addLog("error: " + error);
+
+        $('#btn-send').on('click', function () {
+            var msg = $('#message').val();
+            client.send(msg);
+            $('#message').val('');
         });
-      });
 
+        $('#btn-start').on('click', function () {
+            startProcessing(function(client, base64) {
+                client.start(base64, function (body) {
+                    addLog('started', body);
+                });
+            });
+        });
+
+        $('#btn-threshold').on('click', function () {
+            startProcessing(function(client, base64) {
+                client.threshold(base64, processEndpointResponseFactory('threshold'));
+            });
+        });
+
+        $('#btn-rotate').on('click', function () {
+            startProcessing(function(client, base64) {
+                client.rotate(base64, processEndpointResponseFactory('rotate'));
+            });
+        });
+
+        $('#btn-ocr').on('click', function () {
+            startProcessing(function(client, base64) {
+                client.ocr(base64, processEndpointResponseFactory('ocr'));
+            });
+        });
     });
-
-    // initial state
-    $('#btn-connect').prop('disabled', false);
-    $('#btn-send').prop('disabled', true);
-
-    $('#btn-connect').on('click', function () {
-      lock.show({
-        auth: {
-          params: {
-            scope: 'openid email user_metadata app_metadata'
-          }
-        }
-      });
-    });
-
-    $('#btn-send').on('click', function () {
-      var msg = $('#message').val();
-      client.send(msg);
-      $('#message').val('');
-    });
-
-    $('#btn-start').on('click', function () {
-      var reader = new FileReader();
-      reader.addEventListener("load", function () {
-        var base64 = reader.result.split(',')[1];
-        client.start(base64);
-      }, false);
-
-      var file = document.querySelector('input[type=file]').files[0];
-      if (file) {
-        reader.readAsDataURL(file);
-      }
-    });
-
-    $('#btn-threshold').on('click', function () {
-      var reader = new FileReader();
-      reader.addEventListener("load", function () {
-        var base64 = reader.result.split(',')[1];
-        client.threshold(base64, processResponse);
-      }, false);
-
-      var file = document.querySelector('input[type=file]').files[0];
-      if (file) {
-        reader.readAsDataURL(file);
-      }
-    });
-
-    $('#btn-rotate').on('click', function () {
-      var reader = new FileReader();
-      reader.addEventListener("load", function () {
-        var base64 = reader.result.split(',')[1];
-        client.rotate(base64, processResponse);
-      }, false);
-
-      var file = document.querySelector('input[type=file]').files[0];
-      if (file) {
-        reader.readAsDataURL(file);
-      }
-    });
-
-    $('#btn-ocr').on('click', function () {
-      var reader = new FileReader();
-      reader.addEventListener("load", function () {
-        var base64 = reader.result.split(',')[1];
-        client.ocr(base64, processResponse);
-      }, false);
-
-      var file = document.querySelector('input[type=file]').files[0];
-      if (file) {
-        reader.readAsDataURL(file);
-      }
-    });
-  });
 </script>
