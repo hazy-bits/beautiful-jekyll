@@ -15,13 +15,13 @@ common-js:
             {{ content }}
 
             <div class="row">
-                <h2>Serverless Notifications</h2>
-            </div>
-            <div class="row">
                 <input id="btn-connect" type="button" class="btn btn-primary" value='Connect'>
+                <label class="btn btn-primary" for="my-file-selector">
+                    <input id="my-file-selector" type="file" onchange="loadImage(this)" style="display:none;">
+                    Select Image
+                </label>
             </div>
-            <div class="row">
-                Select file for processing: <input type="file"><br>
+            <div id="imageStack" class="row">
             </div>
             <div class="row">
                 <input id="btn-start" type="button" class="btn btn-primary" value='Upload and Process'>
@@ -44,6 +44,22 @@ common-js:
     $("#log").prepend('<li>[' + date + '] ' + msg + '</li>');
   }
 
+  function createImageTag(url) {
+      return $('<img src="' + url + '" style="max-height:300px;padding:20px">');
+  }
+
+  function loadImage(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+
+      reader.onload = function (e) {
+        $("#imageStack").append(createImageTag(e.target.result));
+      };
+
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', function() {
 
     var client = new HazyBits();
@@ -51,29 +67,33 @@ common-js:
 
     var processResponse = function (message) {
       try {
-        var report = JSON.parse(message);
-        if (typeof(report) === "object") {
-          var collapsibleId = 'files' + new Date().getTime();
-          var reportDiv = $('<li><a data-toggle="collapse" href="#' + collapsibleId + '" aria-expanded="false"' +
-                                    ' aria-controls="' + collapsibleId + '">[' +
-                                    (new Date()).toTimeString().slice(0, 8) + '] Execution Results</a></li>');
+        var result = JSON.parse(message);
+        if (typeof(result) === "object") {
 
-          if (report.blobs) {
-            for (var blobName in report.blobs) {
-              var content = $('<div class="collapse" id="' + collapsibleId + '"></div>');
+          if (result.blobs) {
+            for (var blobName in result.blobs) {
               if (blobName === 'image') {
-                content.append('<img src="data:image/png;base64, ' + report.blobs[blobName] + '" style="max-height:400px">');
+                var imageStack = $("#imageStack");
+                var blob = result.blobs[blobName];
+
+                if (blob.type === 'base64') {
+                   imageStack.append(createImageTag('data:image/png;base64,' + blob.data));
+                }
+                else if (blob.type === 'file') {
+                  var img = createImageTag('#').appendTo(imageStack);
+                  client.convert(blob, function(data) {
+                    data = JSON.parse(data);
+                    img.attr('src', 'data:image/png;base64,' + data.blobs.image.data)
+                  });
+                }
               } else {
-                content.append('<a target="_blank" href=' + report.blobs[blobName] + '> Download ' + blobName + '</a>');
+                addLog(result.blobs[blobName]);
               }
-              reportDiv.append(content);
             }
-            $("#log").prepend(reportDiv);
           }
           else {
             addLog("message: " + message);
           }
-
         }
       } catch (e) {
         addLog("message: " + message);
@@ -106,29 +126,7 @@ common-js:
         client.on('message', function (message) {
           try {
             addLog("message: " + message);
-              /*
-               var report = JSON.parse(message);
-               if (typeof(report) === "object"){
-               var collapsibleId = `files${(new Date()).getTime()}`;
-               var reportDiv = $(`<li><a data-toggle="collapse" href="#${collapsibleId}" aria-expanded="false" aria-controls="#${collapsibleId}">[${(new Date()).toTimeString().slice(0, 8)}] ${report.status}</a></li>`);
-
-               if (report.blobs) {
-               for(let blobName in report.blobs) {
-               let content = $(`<div class="collapse" id="${collapsibleId}"></div>`);
-               if (blobName === 'image'){
-               content.append(`<img src="data:image/png;base64, ${report.blobs[blobName]}" style="max-height:400px">`);
-               } else {
-               content.append(`<a  target="_blank" href=${report.blobs[blobName]}> Download ${blobName}</a>`);
-               }
-               reportDiv.append(content);
-               }
-               }
-               else {
-               addLog("message: " + message);
-               }
-
-               }
-               */
+            processResponse(message);
           } catch (e) {
             addLog("message: " + message);
           }
