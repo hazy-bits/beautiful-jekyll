@@ -3,10 +3,6 @@ layout: page
 title: About us
 subtitle: A big story of a small team
 ---
-
-We at HazyBits are striving to adopt modern cloud technologies to bring advanced image processing and computer vision capabilities to developers of all kinds of applications. Our goal is to provide access to powerful instruments through carefully designed APIs.
-
-## Team's Portfolio
 We are a small team of engineers who worked on major products in image processing industry during past 10+ years:
 
  - [Captiva PixTools](http://www.emc2.org/enterprise-content-management/captiva/pixtools-toolkit.htm)
