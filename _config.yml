@@ -23,13 +23,13 @@ description: A virtual proof that name is awesome!
 
 # List of links in the navigation bar
 navbar-links:
-  Demo: "pages/demo"
-  Documentation:
-    - Conceptual: "https://hazybits.com/docs"
-    - JS API: "https://github.com/hazy-bits/hazybits-js"
-    - Web API: "https://github.com/hazy-bits/hazybits-raml"
-  Blog: "pages/blog"
+  # Demo: "pages/demo"
+  # Documentation:
+  #   - Conceptual: "https://hazybits.com/docs"
+  #   - JS API: "https://github.com/hazy-bits/hazybits-js"
+  #   - Web API: "https://github.com/hazy-bits/hazybits-raml"
   About: "pages/about"
+  Blog: "pages/blog"
   Login: "pages/login"
 
 # Image to show in the navigation bar - image must be a square (width = height)
