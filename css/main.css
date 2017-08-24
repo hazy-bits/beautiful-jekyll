@@ -1,10 +1,31 @@
 @import url("pygment_highlights.css");
 
+@font-face {
+  font-family: HazyHeaderBold;
+  src: url(fonts/Sansation-Bold.ttf);
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: HazyHeaderRegular;
+  src: url(fonts/Sansation-Regular.ttf);
+}
+
+@font-face {
+  font-family: HazyHeaderLight;
+  src: url(fonts/Sansation-Light.ttf);
+}
+
+@font-face {
+  font-family: HazyBodyLight;
+  src: url(fonts/CorbertCondensed.otf);
+}
+
 /* --- General --- */
 
 body {
   /*font-family: 'Lora', 'Times New Roman', serif;*/
-  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
+  font-family: HazyBodyLight;
   font-size: 16px;
   color: #404040;
   position: relative;
@@ -20,7 +41,7 @@ p a {
 }
 h1,h2,h3,h4,h5,h6 {
   /*font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
-  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
+  font-family: HazyHeaderBold;
   font-weight: 600;
 }
 a {
@@ -55,7 +76,7 @@ hr.small {
 }
 
 .main-explain-area {
-  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: HazyBodyLight;
   padding: 15px inherit;
 }
 
@@ -101,12 +122,12 @@ img {
 .navbar-custom {
   background: #F5F5F5;
   border-bottom: 1px solid #EAEAEA;
-  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: HazyHeaderBold;
 }
 
 .navbar-custom .nav li a {
   text-transform: uppercase;
-  font-size: 12px;
+  font-size: 16px;
   letter-spacing: 1px;
 }
 
@@ -274,7 +295,7 @@ footer .list-inline {
   padding: 0;
 }
 footer .copyright {
-  font-family: Open Sans;
+  font-family: HazyHeaderLight;
   text-align: center;
   margin-bottom: 0;
 }
@@ -340,7 +361,7 @@ footer .theme-by {
   margin: 0 0 10px;
 }
 .post-preview .post-entry {
-  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: HazyBodyLight;
 }
 .post-entry-container {
   display: inline-block;
@@ -377,7 +398,7 @@ footer .theme-by {
 /* --- Tags --- */
 
 .blog-tags {
-  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: HazyHeaderBold
   color: #999;
   font-size: 15px;
   margin-bottom: 30px;
@@ -470,7 +491,7 @@ footer .theme-by {
   font-size: 27px;
   line-height: 1.1;
   display: block;
-  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: HazyHeaderRegular;
   font-weight: 300;
   margin: 10px 0 0;
 }
@@ -495,7 +516,7 @@ footer .theme-by {
   padding: 5px 10px;
   font-size: 11px;
   color: #EEE;
-  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: HazyHeaderRegular;
   right: 0;
   bottom: 0;
   display: none;
@@ -569,7 +590,7 @@ footer .theme-by {
 /* --- Pager --- */
 
 .pager li a {
-  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: HazyBodyLight;
   text-transform: uppercase;
   font-size: 14px;
   font-weight: 800;
