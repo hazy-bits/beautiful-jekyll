@@ -405,15 +405,25 @@ footer .theme-by {
 }
 
 .blog-tags a {
-  color: #008AFF;
+  color: #5c853b;
   text-decoration: none;
-  padding: 0px 5px;
+  display: inline-block;
+  background: rgba(92,133,59,0.15);
+  padding: 0 .5rem;
+  margin-right: .5rem;
+  border-radius: 4px;
 }
 
 .blog-tags a:hover {
-  border-radius: 2px;
-  color: #008AFF;
-  background-color: #CCC;
+  border-radius: 4px;
+  color: #FFFFFF;
+  background-color: #5c853b;
+}
+
+.blog-tags a:before {
+  content: "\f02b";
+  font-family: FontAwesome;
+  padding-right: .5em;
 }
 
 .post-preview .blog-tags {
